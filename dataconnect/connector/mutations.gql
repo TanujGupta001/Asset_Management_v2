@@ -1,0 +1,661 @@
+# =========================
+# DEPARTMENT
+# =========================
+
+mutation CreateDepartment(
+  $name: String!
+  $head: String
+  $description: String
+) @auth(level: PUBLIC) {
+  department_insert(
+    data: {
+      name: $name
+      head: $head
+      description: $description
+    }
+  )
+}
+
+
+mutation UpdateDepartment(
+  $id: UUID!
+  $name: String
+  $head: String
+  $description: String
+) @auth(level: PUBLIC) {
+  department_update(
+    key: {id: $id}
+    data: {
+      name: $name
+      head: $head
+      description: $description
+    }
+  )
+}
+
+
+mutation DeleteDepartment(
+  $id: UUID!
+) @auth(level: PUBLIC) {
+  department_delete(
+    key: {id: $id}
+  )
+}
+
+
+# =========================
+# EMPLOYEE
+# =========================
+
+mutation CreateEmployee(
+  $name: String!
+  $email: String
+  $departmentId: UUID
+  $role: String
+  $phone: String
+  $status: String
+) @auth(level: PUBLIC) {
+  employee_insert(
+    data: {
+      name: $name
+      email: $email
+      departmentId: $departmentId
+      role: $role
+      phone: $phone
+      status: $status
+    }
+  )
+}
+
+
+mutation UpdateEmployee(
+  $id: UUID!
+  $name: String
+  $email: String
+  $departmentId: UUID
+  $role: String
+  $phone: String
+  $status: String
+) @auth(level: PUBLIC) {
+  employee_update(
+    key: {id: $id}
+    data: {
+      name: $name
+      email: $email
+      departmentId: $departmentId
+      role: $role
+      phone: $phone
+      status: $status
+    }
+  )
+}
+
+
+mutation DeleteEmployee(
+  $id: UUID!
+) @auth(level: PUBLIC) {
+  employee_delete(
+    key: {id: $id}
+  )
+}
+
+
+# =========================
+# VENDOR
+# =========================
+
+mutation CreateVendor(
+  $name: String!
+  $contactPerson: String
+  $email: String
+  $phone: String
+  $address: String
+) @auth(level: PUBLIC) {
+  vendor_insert(
+    data: {
+      name: $name
+      contactPerson: $contactPerson
+      email: $email
+      phone: $phone
+      address: $address
+    }
+  )
+}
+
+
+mutation DeleteVendor(
+  $id: UUID!
+) @auth(level: PUBLIC) {
+  vendor_delete(
+    key: {id: $id}
+  )
+}
+
+
+# =========================
+# ASSET
+# =========================
+
+mutation CreateAsset(
+  $assetTag: String!
+  $type: String
+  $departmentId: UUID
+  $employeeId: UUID
+  $vendorId: UUID
+
+  $cpuBrand: String
+  $monitorBrand: String
+  $keyboardBrand: String
+  $mouseBrand: String
+
+  $cpuSerial: String
+  $monitorSerial: String
+  $keyboardSerial: String
+  $mouseSerial: String
+
+  $invoiceNumber: String
+  $purchaseDate: Date
+  $warrantyYears: Int
+  $warrantyExpiry: Date
+
+  $windowsLicense: String
+  $msLicense: String
+  $windowsLicensePurchaseDate: Date
+  $msLicensePurchaseDate: Date
+
+  $antivirus: String
+  $status: String
+  $notes: String
+) @auth(level: PUBLIC) {
+  asset_insert(
+    data: {
+      assetTag: $assetTag
+      type: $type
+
+      departmentId: $departmentId
+      employeeId: $employeeId
+      vendorId: $vendorId
+
+      cpuBrand: $cpuBrand
+      monitorBrand: $monitorBrand
+      keyboardBrand: $keyboardBrand
+      mouseBrand: $mouseBrand
+
+      cpuSerial: $cpuSerial
+      monitorSerial: $monitorSerial
+      keyboardSerial: $keyboardSerial
+      mouseSerial: $mouseSerial
+
+      invoiceNumber: $invoiceNumber
+      purchaseDate: $purchaseDate
+      warrantyYears: $warrantyYears
+      warrantyExpiry: $warrantyExpiry
+
+      windowsLicense: $windowsLicense
+      msLicense: $msLicense
+      windowsLicensePurchaseDate: $windowsLicensePurchaseDate
+      msLicensePurchaseDate: $msLicensePurchaseDate
+
+      antivirus: $antivirus
+      status: $status
+      notes: $notes
+    }
+  )
+}
+
+
+mutation UpdateAsset(
+  $id: UUID!
+  $assetTag: String
+  $type: String
+  $departmentId: UUID
+  $employeeId: UUID
+  $vendorId: UUID
+
+  $cpuBrand: String
+  $monitorBrand: String
+  $keyboardBrand: String
+  $mouseBrand: String
+
+  $cpuSerial: String
+  $monitorSerial: String
+  $keyboardSerial: String
+  $mouseSerial: String
+
+  $invoiceNumber: String
+  $purchaseDate: Date
+  $warrantyYears: Int
+  $warrantyExpiry: Date
+
+  $windowsLicense: String
+  $msLicense: String
+  $windowsLicensePurchaseDate: Date
+  $msLicensePurchaseDate: Date
+
+  $antivirus: String
+  $status: String
+  $notes: String
+) @auth(level: PUBLIC) {
+  asset_update(
+    key: {id: $id}
+    data: {
+      assetTag: $assetTag
+      type: $type
+
+      departmentId: $departmentId
+      employeeId: $employeeId
+      vendorId: $vendorId
+
+      cpuBrand: $cpuBrand
+      monitorBrand: $monitorBrand
+      keyboardBrand: $keyboardBrand
+      mouseBrand: $mouseBrand
+
+      cpuSerial: $cpuSerial
+      monitorSerial: $monitorSerial
+      keyboardSerial: $keyboardSerial
+      mouseSerial: $mouseSerial
+
+      invoiceNumber: $invoiceNumber
+      purchaseDate: $purchaseDate
+      warrantyYears: $warrantyYears
+      warrantyExpiry: $warrantyExpiry
+
+      windowsLicense: $windowsLicense
+      msLicense: $msLicense
+      windowsLicensePurchaseDate: $windowsLicensePurchaseDate
+      msLicensePurchaseDate: $msLicensePurchaseDate
+
+      antivirus: $antivirus
+      status: $status
+      notes: $notes
+    }
+  )
+}
+
+
+mutation UpdateAssetStatus(
+  $id: UUID!
+  $status: String!
+) @auth(level: PUBLIC) {
+  asset_update(
+    key: {id: $id}
+    data: {
+      status: $status
+    }
+  )
+}
+
+
+mutation UpdateAssetAssignment(
+  $id: UUID!
+  $departmentId: UUID
+  $employeeId: UUID
+) @auth(level: PUBLIC) {
+  asset_update(
+    key: {id: $id}
+    data: {
+      departmentId: $departmentId
+      employeeId: $employeeId
+    }
+  )
+}
+
+
+mutation DeleteAsset(
+  $id: UUID!
+) @auth(level: PUBLIC) {
+  asset_delete(
+    key: {id: $id}
+  )
+}
+
+
+# =========================
+# MOVEMENT
+# =========================
+
+mutation CreateMovement(
+  $movementType: String!
+  $movementDate: Timestamp
+  $fromLocation: String
+  $toLocation: String
+  $assetId: UUID!
+  $departmentId: UUID
+  $notes: String
+) @auth(level: PUBLIC) {
+  movement_insert(
+    data: {
+      movementType: $movementType
+      movementDate: $movementDate
+      fromLocation: $fromLocation
+      toLocation: $toLocation
+      assetId: $assetId
+      departmentId: $departmentId
+      notes: $notes
+    }
+  )
+}
+
+
+# =========================
+# TRANSFER
+# =========================
+
+mutation CreateTransfer(
+  $transferDate: Timestamp
+  $assetId: UUID!
+  $fromDepartmentId: UUID
+  $toDepartmentId: UUID
+  $fromEmployeeId: UUID
+  $toEmployeeId: UUID
+  $reason: String
+  $approvedBy: String
+  $handover: String
+  $notes: String
+  $status: String
+) @auth(level: PUBLIC) {
+  transfer_insert(
+    data: {
+      transferDate: $transferDate
+
+      assetId: $assetId
+
+      fromDepartmentId: $fromDepartmentId
+      toDepartmentId: $toDepartmentId
+
+      fromEmployeeId: $fromEmployeeId
+      toEmployeeId: $toEmployeeId
+
+      reason: $reason
+      approvedBy: $approvedBy
+      handover: $handover
+      notes: $notes
+      status: $status
+    }
+  )
+}
+
+
+# =========================
+# SOFTWARE LICENSE
+# =========================
+
+mutation CreateSoftwareLicense(
+  $licenseNumber: String!
+  $type: String!
+  $edition: String
+  $productKey: String
+
+  $assetId: UUID
+  $departmentId: UUID
+  $employeeId: UUID
+  $vendorId: UUID
+
+  $purchaseDate: Date
+  $expiryDate: Date
+  $status: String
+  $notes: String
+) @auth(level: PUBLIC) {
+  softwareLicense_insert(
+    data: {
+      licenseNumber: $licenseNumber
+      type: $type
+      edition: $edition
+      productKey: $productKey
+
+      assetId: $assetId
+      departmentId: $departmentId
+      employeeId: $employeeId
+      vendorId: $vendorId
+
+      purchaseDate: $purchaseDate
+      expiryDate: $expiryDate
+      status: $status
+      notes: $notes
+    }
+  )
+}
+
+
+mutation UpdateSoftwareLicense(
+  $id: UUID!
+  $licenseNumber: String
+  $type: String
+  $edition: String
+  $productKey: String
+
+  $assetId: UUID
+  $departmentId: UUID
+  $employeeId: UUID
+  $vendorId: UUID
+
+  $purchaseDate: Date
+  $expiryDate: Date
+  $status: String
+  $notes: String
+) @auth(level: PUBLIC) {
+  softwareLicense_update(
+    key: {id: $id}
+    data: {
+      licenseNumber: $licenseNumber
+      type: $type
+      edition: $edition
+      productKey: $productKey
+
+      assetId: $assetId
+      departmentId: $departmentId
+      employeeId: $employeeId
+      vendorId: $vendorId
+
+      purchaseDate: $purchaseDate
+      expiryDate: $expiryDate
+      status: $status
+      notes: $notes
+    }
+  )
+}
+
+
+mutation DeleteSoftwareLicense(
+  $id: UUID!
+) @auth(level: PUBLIC) {
+  softwareLicense_delete(
+    key: {id: $id}
+  )
+}
+
+
+# =========================
+# INVENTORY
+# =========================
+
+mutation CreateInventoryItem(
+  $type: String!
+  $brand: String
+  $serial: String
+  $productKey: String
+  $condition: String
+  $assignedTo: String
+  $departmentId: UUID
+  $notes: String
+) @auth(level: PUBLIC) {
+  inventoryItem_insert(
+    data: {
+      type: $type
+      brand: $brand
+      serial: $serial
+      productKey: $productKey
+      condition: $condition
+      assignedTo: $assignedTo
+      departmentId: $departmentId
+      notes: $notes
+    }
+  )
+}
+
+
+mutation UpdateInventoryItem(
+  $id: UUID!
+  $type: String
+  $brand: String
+  $serial: String
+  $productKey: String
+  $condition: String
+  $assignedTo: String
+  $departmentId: UUID
+  $notes: String
+) @auth(level: PUBLIC) {
+  inventoryItem_update(
+    key: {id: $id}
+    data: {
+      type: $type
+      brand: $brand
+      serial: $serial
+      productKey: $productKey
+      condition: $condition
+      assignedTo: $assignedTo
+      departmentId: $departmentId
+      notes: $notes
+    }
+  )
+}
+
+
+mutation DeleteInventoryItem(
+  $id: UUID!
+) @auth(level: PUBLIC) {
+  inventoryItem_delete(
+    key: {id: $id}
+  )
+}
+
+
+# =========================
+# TELEPHONE
+# =========================
+
+mutation CreateTelephone(
+  $extension: String
+  $contactNumber: String
+  $assignedTo: String
+  $organization: String
+  $serial: String
+  $status: String
+) @auth(level: PUBLIC) {
+  telephone_insert(
+    data: {
+      extension: $extension
+      contactNumber: $contactNumber
+      assignedTo: $assignedTo
+      organization: $organization
+      serial: $serial
+      status: $status
+    }
+  )
+}
+
+
+mutation DeleteTelephone(
+  $id: UUID!
+) @auth(level: PUBLIC) {
+  telephone_delete(
+    key: {id: $id}
+  )
+}
+
+
+# =========================
+# PRINTER
+# =========================
+
+mutation CreatePrinter(
+  $serial: String
+  $brand: String
+  $model: String
+  $productNumber: String
+  $assignedTo: String
+  $status: String
+) @auth(level: PUBLIC) {
+  printer_insert(
+    data: {
+      serial: $serial
+      brand: $brand
+      model: $model
+      productNumber: $productNumber
+      assignedTo: $assignedTo
+      status: $status
+    }
+  )
+}
+
+
+mutation DeletePrinter(
+  $id: UUID!
+) @auth(level: PUBLIC) {
+  printer_delete(
+    key: {id: $id}
+  )
+}
+
+
+# =========================
+# AUDIT LOG
+# =========================
+
+mutation CreateAuditLog(
+  $action: String!
+  $entity: String!
+  $entityId: UUID
+  $performedBy: String
+  $details: String
+) @auth(level: PUBLIC) {
+  auditLog_insert(
+    data: {
+      action: $action
+      entity: $entity
+      entityId: $entityId
+      performedBy: $performedBy
+      details: $details
+    }
+  )
+}
+
+
+# =========================
+# ADMIN USERS
+# =========================
+  $username: String!
+  $password: String!
+  $role: String
+) @auth(level: PUBLIC) {
+  adminUser_insert(
+    data: {
+      username: $username
+      password: $password
+      role: $role
+    }
+  )
+}
+
+
+mutation UpdateAdminUserPassword(
+  $id: UUID!
+  $password: String!
+) @auth(level: PUBLIC) {
+  adminUser_update(
+    key: {id: $id}
+    data: {
+      password: $password
+    }
+  )
+}
+
+
+mutation DeleteAdminUser(
+  $id: UUID!
+) @auth(level: PUBLIC) {
+  adminUser_delete(
+    key: {id: $id}
+  )
+}

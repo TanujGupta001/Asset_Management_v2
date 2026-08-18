@@ -1,0 +1,7 @@
+# Connector configuration for ITAM SDK generation
+connectorName: itam-connector
+outputDir: ../lib/generated
+generate:
+  javascriptSdk:
+    outputDir: ../lib/generated
+    package: @itam/dataconnect

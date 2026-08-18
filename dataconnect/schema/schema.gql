@@ -1,0 +1,185 @@
+type Department @table {
+  id: UUID! @default(expr: "uuidV4()")
+  name: String! @unique
+  head: String
+  description: String
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+}
+
+type Employee @table {
+  id: UUID! @default(expr: "uuidV4()")
+  name: String!
+  email: String @unique
+  role: String
+  phone: String
+  status: String! @default(value: "Active")
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+
+  department: Department @ref
+}
+
+type Vendor @table {
+  id: UUID! @default(expr: "uuidV4()")
+  name: String!
+  contactPerson: String
+  email: String
+  phone: String
+  address: String
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+}
+
+type Asset @table {
+  id: UUID! @default(expr: "uuidV4()")
+  assetTag: String! @unique
+  type: String! @default(value: "Other")
+
+  department: Department @ref
+  employee: Employee @ref
+  vendor: Vendor @ref
+
+  cpuBrand: String
+  monitorBrand: String
+  keyboardBrand: String
+  mouseBrand: String
+
+  cpuSerial: String
+  monitorSerial: String
+  keyboardSerial: String
+  mouseSerial: String
+
+  invoiceNumber: String
+  purchaseDate: Date
+  warrantyYears: Int @default(value: 0)
+  warrantyExpiry: Date
+
+  windowsLicense: String
+  msLicense: String
+  windowsLicensePurchaseDate: Date
+  msLicensePurchaseDate: Date
+
+  antivirus: String
+  status: String! @default(value: "Active")
+  notes: String
+
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+}
+
+type Movement @table {
+  id: UUID! @default(expr: "uuidV4()")
+  movementType: String!
+  movementDate: Timestamp! @default(expr: "request.time")
+  fromLocation: String
+  toLocation: String
+  notes: String
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+
+  asset: Asset! @ref
+  department: Department @ref
+}
+
+type Transfer @table {
+  id: UUID! @default(expr: "uuidV4()")
+  transferDate: Timestamp! @default(expr: "request.time")
+
+  reason: String
+  approvedBy: String
+  handover: String
+  notes: String
+  status: String! @default(value: "Completed")
+
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+
+  asset: Asset! @ref
+  fromDepartment: Department @ref
+  toDepartment: Department @ref
+  fromEmployee: Employee @ref
+  toEmployee: Employee @ref
+}
+
+type SoftwareLicense @table {
+  id: UUID! @default(expr: "uuidV4()")
+  licenseNumber: String! @unique
+  type: String!
+  edition: String
+  productKey: String @unique
+
+  purchaseDate: Date
+  expiryDate: Date
+  status: String! @default(value: "Active")
+  notes: String
+
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+
+  asset: Asset @ref
+  department: Department @ref
+  employee: Employee @ref
+  vendor: Vendor @ref
+}
+
+type InventoryItem @table {
+  id: UUID! @default(expr: "uuidV4()")
+  type: String!
+  brand: String
+  serial: String
+  productKey: String
+  condition: String! @default(value: "Working")
+  assignedTo: String
+  notes: String
+
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+
+  department: Department @ref
+}
+
+type Telephone @table {
+  id: UUID! @default(expr: "uuidV4()")
+  extension: String
+  contactNumber: String
+  assignedTo: String
+  organization: String
+  serial: String
+  status: String! @default(value: "Working")
+
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+}
+
+type Printer @table {
+  id: UUID! @default(expr: "uuidV4()")
+  serial: String
+  brand: String
+  model: String
+  productNumber: String
+  assignedTo: String
+  status: String! @default(value: "Working")
+
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+}
+
+type AuditLog @table {
+  id: UUID! @default(expr: "uuidV4()")
+  action: String!
+  entity: String!
+  entityId: UUID
+  performedBy: String
+  details: String
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+type AdminUser @table {
+  id: UUID! @default(expr: "uuidV4()")
+  username: String! @unique
+  password: String!
+  role: String! @default(value: "viewer")
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+}

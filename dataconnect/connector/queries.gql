@@ -1,0 +1,689 @@
+# =========================
+# ITAM QUERIES
+# =========================
+
+query GetDepartments @auth(level: PUBLIC) {
+  departments(orderBy: [{name: ASC}]) {
+    id
+    name
+    head
+    description
+    createdAt
+    updatedAt
+  }
+}
+
+
+query GetEmployees @auth(level: PUBLIC) {
+  employees(orderBy: [{name: ASC}]) {
+    id
+    name
+    email
+    role
+    phone
+    status
+    createdAt
+    updatedAt
+
+    department {
+      id
+      name
+      head
+      description
+    }
+  }
+}
+
+
+query GetAvailableEmployees @auth(level: PUBLIC) {
+  employees(
+    where: {status: {eq: "Active"}}
+    orderBy: [{name: ASC}]
+  ) {
+    id
+    name
+    email
+    role
+    phone
+    status
+    createdAt
+    updatedAt
+
+    department {
+      id
+      name
+      head
+      description
+    }
+  }
+}
+
+
+query GetVendors @auth(level: PUBLIC) {
+  vendors(orderBy: [{name: ASC}]) {
+    id
+    name
+    contactPerson
+    email
+    phone
+    address
+    createdAt
+    updatedAt
+  }
+}
+
+
+# =========================
+# ASSETS
+# =========================
+
+query GetAssets @auth(level: PUBLIC) {
+  assets(orderBy: [{assetTag: ASC}]) {
+    id
+    assetTag
+    type
+
+    cpuBrand
+    monitorBrand
+    keyboardBrand
+    mouseBrand
+
+    cpuSerial
+    monitorSerial
+    keyboardSerial
+    mouseSerial
+
+    invoiceNumber
+    purchaseDate
+    warrantyYears
+    warrantyExpiry
+
+    windowsLicense
+    msLicense
+    windowsLicensePurchaseDate
+    msLicensePurchaseDate
+
+    antivirus
+    status
+    notes
+
+    createdAt
+    updatedAt
+
+    department {
+      id
+      name
+      head
+      description
+    }
+
+    employee {
+      id
+      name
+      email
+      role
+      phone
+      status
+    }
+
+    vendor {
+      id
+      name
+      contactPerson
+      email
+      phone
+      address
+    }
+  }
+}
+
+
+query GetAssetById($id: UUID!) @auth(level: PUBLIC) {
+  assets(where: {id: {eq: $id}}) {
+    id
+    assetTag
+    type
+
+    cpuBrand
+    monitorBrand
+    keyboardBrand
+    mouseBrand
+
+    cpuSerial
+    monitorSerial
+    keyboardSerial
+    mouseSerial
+
+    invoiceNumber
+    purchaseDate
+    warrantyYears
+    warrantyExpiry
+
+    windowsLicense
+    msLicense
+    windowsLicensePurchaseDate
+    msLicensePurchaseDate
+
+    antivirus
+    status
+    notes
+
+    createdAt
+    updatedAt
+
+    department {
+      id
+      name
+      head
+      description
+    }
+
+    employee {
+      id
+      name
+      email
+      role
+      phone
+      status
+    }
+
+    vendor {
+      id
+      name
+      contactPerson
+      email
+      phone
+      address
+    }
+  }
+}
+
+
+query GetAssetsByStatus($status: String!) @auth(level: PUBLIC) {
+  assets(
+    where: {status: {eq: $status}}
+    orderBy: [{assetTag: ASC}]
+  ) {
+    id
+    assetTag
+    type
+
+    cpuBrand
+    monitorBrand
+    keyboardBrand
+    mouseBrand
+
+    cpuSerial
+    monitorSerial
+    keyboardSerial
+    mouseSerial
+
+    invoiceNumber
+    purchaseDate
+    warrantyYears
+    warrantyExpiry
+
+    windowsLicense
+    msLicense
+    windowsLicensePurchaseDate
+    msLicensePurchaseDate
+
+    antivirus
+    status
+    notes
+
+    createdAt
+    updatedAt
+
+    department {
+      id
+      name
+      head
+      description
+    }
+
+    employee {
+      id
+      name
+      email
+      role
+      phone
+      status
+    }
+
+    vendor {
+      id
+      name
+      contactPerson
+      email
+      phone
+      address
+    }
+  }
+}
+
+
+query GetAssetsByDepartment($deptId: UUID!) @auth(level: PUBLIC) {
+  assets(
+    where: {departmentId: {eq: $deptId}}
+    orderBy: [{assetTag: ASC}]
+  ) {
+    id
+    assetTag
+    type
+
+    cpuBrand
+    monitorBrand
+    keyboardBrand
+    mouseBrand
+
+    cpuSerial
+    monitorSerial
+    keyboardSerial
+    mouseSerial
+
+    invoiceNumber
+    purchaseDate
+    warrantyYears
+    warrantyExpiry
+
+    windowsLicense
+    msLicense
+    windowsLicensePurchaseDate
+    msLicensePurchaseDate
+
+    antivirus
+    status
+    notes
+
+    createdAt
+    updatedAt
+
+    department {
+      id
+      name
+      head
+      description
+    }
+
+    employee {
+      id
+      name
+      email
+      role
+      phone
+      status
+    }
+
+    vendor {
+      id
+      name
+      contactPerson
+      email
+      phone
+      address
+    }
+  }
+}
+
+
+# =========================
+# MOVEMENTS
+# =========================
+
+query GetMovements @auth(level: PUBLIC) {
+  movements(orderBy: [{movementDate: DESC}]) {
+    id
+    movementType
+    movementDate
+    fromLocation
+    toLocation
+    notes
+    createdAt
+    updatedAt
+
+    asset {
+      id
+      assetTag
+      type
+      status
+
+      department {
+        id
+        name
+      }
+    }
+
+    department {
+      id
+      name
+      head
+      description
+    }
+  }
+}
+
+
+query GetRecentMovements($limit: Int!) @auth(level: PUBLIC) {
+  movements(
+    orderBy: [{movementDate: DESC}]
+    limit: $limit
+  ) {
+    id
+    movementType
+    movementDate
+    fromLocation
+    toLocation
+    notes
+    createdAt
+    updatedAt
+
+    asset {
+      id
+      assetTag
+      type
+      status
+
+      department {
+        id
+        name
+      }
+    }
+
+    department {
+      id
+      name
+      head
+      description
+    }
+  }
+}
+
+
+# =========================
+# TRANSFERS
+# =========================
+
+query GetTransfers @auth(level: PUBLIC) {
+  transfers(orderBy: [{transferDate: DESC}]) {
+    id
+    transferDate
+
+    reason
+    approvedBy
+    handover
+    notes
+    status
+
+    createdAt
+    updatedAt
+
+    asset {
+      id
+      assetTag
+      type
+      status
+    }
+
+    fromDepartment {
+      id
+      name
+      head
+      description
+    }
+
+    toDepartment {
+      id
+      name
+      head
+      description
+    }
+
+    fromEmployee {
+      id
+      name
+      email
+      role
+      phone
+      status
+    }
+
+    toEmployee {
+      id
+      name
+      email
+      role
+      phone
+      status
+    }
+  }
+}
+
+
+# =========================
+# SOFTWARE LICENSES
+# =========================
+
+query GetSoftwareLicenses @auth(level: PUBLIC) {
+  softwareLicenses(orderBy: [{licenseNumber: ASC}]) {
+    id
+    licenseNumber
+    type
+    edition
+    productKey
+
+    purchaseDate
+    expiryDate
+    status
+    notes
+
+    createdAt
+    updatedAt
+
+    asset {
+      id
+      assetTag
+      type
+      status
+    }
+
+    department {
+      id
+      name
+      head
+      description
+    }
+
+    employee {
+      id
+      name
+      email
+      role
+      phone
+      status
+    }
+
+    vendor {
+      id
+      name
+      contactPerson
+      email
+      phone
+      address
+    }
+  }
+}
+
+
+# =========================
+# INVENTORY
+# =========================
+
+query GetInventoryItems @auth(level: PUBLIC) {
+  inventoryItems(orderBy: [{type: ASC}]) {
+    id
+    type
+    brand
+    serial
+    productKey
+    condition
+    assignedTo
+    notes
+    createdAt
+    updatedAt
+
+    department {
+      id
+      name
+    }
+  }
+}
+
+
+# =========================
+# TELEPHONES
+# =========================
+
+query GetTelephones @auth(level: PUBLIC) {
+  telephones(orderBy: [{organization: ASC}]) {
+    id
+    extension
+    contactNumber
+    assignedTo
+    organization
+    serial
+    status
+    createdAt
+    updatedAt
+  }
+}
+
+
+# =========================
+# PRINTERS
+# =========================
+
+query GetPrinters @auth(level: PUBLIC) {
+  printers(orderBy: [{brand: ASC}]) {
+    id
+    serial
+    brand
+    model
+    productNumber
+    assignedTo
+    status
+    createdAt
+    updatedAt
+  }
+}
+
+
+# =========================
+# AUDIT LOGS
+# =========================
+
+query GetAuditLogs($limit: Int!) @auth(level: PUBLIC) {
+  auditLogs(
+    orderBy: [{createdAt: DESC}]
+    limit: $limit
+  ) {
+    id
+    action
+    entity
+    entityId
+    performedBy
+    details
+    createdAt
+  }
+}
+
+
+# =========================
+# ADMIN USERS
+# =========================
+
+query GetAdminUsers @auth(level: PUBLIC) {
+  adminUsers(orderBy: [{username: ASC}]) {
+    id
+    username
+    role
+    createdAt
+    updatedAt
+  }
+}
+
+
+query GetAdminUserByUsername($username: String!) @auth(level: PUBLIC) {
+  adminUsers(where: {username: {eq: $username}}) {
+    id
+    username
+    password
+    role
+    createdAt
+    updatedAt
+  }
+}
+
+query GetAvailableResources @auth(level: PUBLIC) {
+
+  assets(
+    where: {
+      status: {
+        in: ["Idle", "Active"]
+      }
+    }
+    orderBy: [{assetTag: ASC}]
+  ) {
+    id
+    assetTag
+    type
+    status
+
+    department {
+      id
+      name
+      head
+      description
+    }
+
+    employee {
+      id
+      name
+    }
+  }
+
+  inventoryItems(
+    where: {
+      condition: {
+        eq: "Working"
+      }
+    }
+    orderBy: [{type: ASC}]
+  ) {
+    id
+    type
+    brand
+    serial
+    productKey
+    condition
+    assignedTo
+    notes
+  }
+
+  telephones(
+    where: {
+      status: {
+        eq: "Spare"
+      }
+    }
+    orderBy: [{extension: ASC}]
+  ) {
+    id
+    extension
+    contactNumber
+    assignedTo
+    organization
+    serial
+    status
+  }
+}

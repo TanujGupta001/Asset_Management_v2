@@ -1,0 +1,8 @@
+# Firebase Data Connect service configuration
+# Replace with your actual Firebase project ID, location, and service ID
+location: asia-south1
+serviceId: asset-management-goalseek
+schema:
+  - schema/schema.gql
+connector:
+  - connector/connector.yaml
