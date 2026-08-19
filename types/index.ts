@@ -189,6 +189,13 @@ export interface AdminUser {
   updatedAt: string;
 }
 
+export interface AppNotification {
+  id: string;
+  title: string;
+  description: string;
+  href: string;
+}
+
 export interface DashboardStats {
   totalAssets: number;
   activeAssets: number;

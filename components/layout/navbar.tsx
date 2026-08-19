@@ -32,6 +32,7 @@ import { useUIStore } from '@/store/ui-store';
 import { SESSION_KEY } from '@/lib/auth';
 import { useAuth } from '@/components/auth-provider';
 import { cn } from '@/lib/utils';
+import type { AppNotification } from '@/types';
 
 const pageNames: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -55,7 +56,7 @@ export function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const { toggleSidebar, globalSearch, setGlobalSearch } = useUIStore();
   const [searchValue, setSearchValue] = useState('');
-  const [notifications, setNotifications] = useState(3);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const searchRef = useRef<HTMLInputElement>(null);
 
   const { username, isAdmin } = useAuth();
@@ -71,6 +72,16 @@ export function Navbar() {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, []);
+
+  // Load live notifications; re-fetch on navigation so counts stay current.
+  useEffect(() => {
+    let active = true;
+    fetch('/api/notifications')
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => { if (active) setNotifications(Array.isArray(data) ? data : []); })
+      .catch(() => { if (active) setNotifications([]); });
+    return () => { active = false; };
+  }, [pathname]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,30 +161,39 @@ export function Navbar() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
               <Bell className="w-4 h-4" />
-              {notifications > 0 && (
+              {notifications.length > 0 && (
                 <Badge className="absolute -top-1 -right-1 h-4 min-w-4 px-1 text-[10px] flex items-center justify-center bg-accent text-accent-foreground">
-                  {notifications}
+                  {notifications.length}
                 </Badge>
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-72">
+          <DropdownMenuContent
+            align="end"
+            className="w-[min(20rem,calc(100vw-1.5rem))] max-h-[70vh] overflow-y-auto"
+          >
             <DropdownMenuLabel>Notifications</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="flex flex-col items-start gap-1">
-              <span className="text-sm font-medium">Warranty Expiring</span>
-              <span className="text-xs text-muted-foreground">2 assets have warranty expiring soon</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="flex flex-col items-start gap-1">
-              <span className="text-sm font-medium">License Expiring</span>
-              <span className="text-xs text-muted-foreground">1 software license expires within 30 days</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="flex flex-col items-start gap-1">
-              <span className="text-sm font-medium">Asset in Repair</span>
-              <span className="text-xs text-muted-foreground">2 assets currently in repair</span>
-            </DropdownMenuItem>
+            {notifications.length === 0 ? (
+              <div className="px-2 py-6 text-center text-xs text-muted-foreground">
+                You&apos;re all caught up
+              </div>
+            ) : (
+              notifications.map((n) => (
+                <DropdownMenuItem
+                  key={n.id}
+                  className="flex flex-col items-start gap-1 cursor-pointer"
+                  onClick={() => router.push(n.href)}
+                >
+                  <span className="text-sm font-medium">{n.title}</span>
+                  <span className="text-xs text-muted-foreground whitespace-normal break-words">
+                    {n.description}
+                  </span>
+                </DropdownMenuItem>
+              ))
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
 

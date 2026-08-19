@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { movementSchema, type MovementFormValues } from '@/schemas';
 import { createMovementAction } from '@/actions';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -59,6 +59,7 @@ export function MovementModal({ open, onClose, assets, departments, defaultAsset
       <DialogContent className="max-w-lg max-h-[90vh] p-0 flex flex-col">
         <DialogHeader className="px-6 pt-6 pb-4 border-b shrink-0">
           <DialogTitle>Log Asset Movement</DialogTitle>
+          <DialogDescription className="sr-only">Record an asset issue, return, repair, or disposal.</DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
           <div className="overflow-y-auto px-6 py-4 flex-1 space-y-4">

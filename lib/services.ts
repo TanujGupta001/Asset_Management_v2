@@ -1,7 +1,8 @@
 import { executeGraphQL } from './firebase';
 import type {
   Asset, Department, Employee, Vendor, Movement, Transfer,
-  SoftwareLicense, InventoryItem, Telephone, Printer, AuditLog, DashboardStats,
+  SoftwareLicense, InventoryItem, Telephone, Printer, AuditLog, AdminUser,
+  AppNotification, DashboardStats,
 } from '@/types';
 
 // ============ Departments ============
@@ -289,6 +290,55 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     recentMovements: movements.slice(0, 5), recentTransfers: transfers.slice(0, 5),
     todayMovements, departmentDistribution, statusDistribution, typeDistribution,
   };
+}
+
+// ============ Notifications ============
+export async function getNotifications(): Promise<AppNotification[]> {
+  const [assets, licenses] = await Promise.all([getAssets(), getSoftwareLicenses()]);
+  const now = Date.now();
+  const DAY = 1000 * 60 * 60 * 24;
+  const notifications: AppNotification[] = [];
+
+  const warrantySoon = assets.filter((a) => {
+    if (!a.warrantyExpiry || a.status === 'Disposed') return false;
+    const days = Math.ceil((new Date(a.warrantyExpiry).getTime() - now) / DAY);
+    return days >= 0 && days <= 90;
+  }).length;
+  if (warrantySoon > 0) {
+    notifications.push({
+      id: 'warranty',
+      title: 'Warranty Expiring',
+      description: `${warrantySoon} asset${warrantySoon > 1 ? 's have' : ' has'} warranty expiring within 90 days`,
+      href: '/warranty',
+    });
+  }
+
+  const licenseSoon = licenses.filter((l) => {
+    if (l.status === 'Expiring') return true;
+    if (!l.expiryDate) return false;
+    const days = Math.ceil((new Date(l.expiryDate).getTime() - now) / DAY);
+    return days >= 0 && days <= 30;
+  }).length;
+  if (licenseSoon > 0) {
+    notifications.push({
+      id: 'license',
+      title: 'License Expiring',
+      description: `${licenseSoon} software license${licenseSoon > 1 ? 's expire' : ' expires'} within 30 days`,
+      href: '/licenses',
+    });
+  }
+
+  const inRepair = assets.filter((a) => a.status === 'Repair').length;
+  if (inRepair > 0) {
+    notifications.push({
+      id: 'repair',
+      title: 'Asset in Repair',
+      description: `${inRepair} asset${inRepair > 1 ? 's are' : ' is'} currently in repair`,
+      href: '/assets/by-status',
+    });
+  }
+
+  return notifications;
 }
 
 // ============ Mappers ============
