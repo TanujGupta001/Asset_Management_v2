@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "asset-management-goalseek"
+    "default": "asset-management-gs"
   },
   "targets": {},
   "etags": {}

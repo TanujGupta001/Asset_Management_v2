@@ -7,7 +7,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'IT Asset Manager | Enterprise ITAM',
+  title: 'GoalSeek Asset Manager | Enterprise ITAM',
   description: 'Enterprise IT Asset Management System for managing company assets, licenses, inventory, and tracking.',
 };
 

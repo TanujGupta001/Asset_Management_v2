@@ -1,8 +1,14 @@
-# Firebase Data Connect service configuration
-# Replace with your actual Firebase project ID, location, and service ID
-location: asia-south1
-serviceId: asset-management-goalseek
-schema:
-  - schema/schema.gql
-connector:
-  - connector/connector.yaml
+specVersion: "v1"
+serviceId: "asset-management-gs-service"
+location: "asia-south1"
+schemas:
+  - source: "./schema"
+    datasource:
+      postgresql:
+        database: "asset-management-gs-2-database"
+        cloudSql:
+          instanceId: "asset-management-gs-2-instance"
+          # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
+          # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
+connectorDirs: ["./connector"]
+ 

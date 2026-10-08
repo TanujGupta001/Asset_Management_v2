@@ -56,7 +56,7 @@ function LoginContent() {
       }
 
       sessionStorage.setItem(SESSION_KEY, data.token ?? 'active');
-      toast.success('Login successful', { description: 'Welcome to IT Asset Manager' });
+      toast.success('Login successful', { description: 'Welcome to GoalSeek Asset Manager' });
       const from = searchParams.get('from') || '/dashboard';
       router.replace(from);
     } catch {
@@ -74,7 +74,7 @@ function LoginContent() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary text-primary-foreground shadow-lg mb-4">
             <Building2 className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">IT Asset Manager</h1>
+          <h1 className="text-2xl font-bold tracking-tight">GoalSeek Asset Manager</h1>
           <p className="text-muted-foreground mt-1">Enterprise IT Asset Management System</p>
         </div>
 
@@ -161,7 +161,7 @@ function LoginContent() {
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-6">
-          © {new Date().getFullYear()} IT Asset Manager. All rights reserved.
+          © {new Date().getFullYear()} GoalSeek Asset Manager. All rights reserved.
         </p>
       </div>
     </div>

@@ -12,11 +12,17 @@ const indianPhone = z
   .optional()
   .nullable();
 
+// Data Connect returns UUIDs as 32 hex chars WITHOUT hyphens (e.g. 83f49b31...),
+// which zod's .uuid() rejects. Accept both hyphenated and non-hyphenated forms.
+const isId = (v: string) => /^[0-9a-f]{32}$/i.test(v.replace(/-/g, ''));
+const optionalId = z.string().refine(isId, 'Invalid selection').optional().nullable();
+const requiredId = (message: string) => z.string().refine(isId, message);
+
 export const assetSchema = z.object({
   assetTag: z.string().min(1, 'Asset tag is required'),
   type: z.enum(['Desktop', 'Laptop', 'Monitor', 'Server', 'Tablet', 'Other']),
-  departmentId: z.string().uuid().optional().nullable(),
-  employeeId: z.string().uuid().optional().nullable(),
+  departmentId: optionalId,
+  employeeId: optionalId,
   cpuBrand: z.string().optional().nullable(),
   monitorBrand: z.string().optional().nullable(),
   keyboardBrand: z.string().optional().nullable(),
@@ -25,7 +31,16 @@ export const assetSchema = z.object({
   monitorSerial: z.string().optional().nullable(),
   keyboardSerial: z.string().optional().nullable(),
   mouseSerial: z.string().optional().nullable(),
-  vendorId: z.string().uuid().optional().nullable(),
+  macAddress: z
+    .string()
+    .trim()
+    .refine(
+      (v) => v === '' || /^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$/.test(v),
+      'Enter a valid MAC address (e.g. 00:1A:2B:3C:4D:5E)',
+    )
+    .optional()
+    .nullable(),
+  vendorId: optionalId,
   invoiceNumber: z.string().optional().nullable(),
   purchaseDate: z.string().optional().nullable(),
   warrantyYears: z.coerce.number().min(0).max(20).default(0),
@@ -42,27 +57,27 @@ export const assetSchema = z.object({
 export const employeeSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Invalid email').optional().or(z.literal('')),
-  departmentId: z.string().uuid().optional().nullable(),
+  departmentId: optionalId,
   role: z.string().optional().nullable(),
   phone: indianPhone,
   status: z.enum(['Active', 'Inactive', 'On Leave']).default('Active'),
 });
 
 export const movementSchema = z.object({
-  assetId: z.string().uuid('Asset is required'),
+  assetId: requiredId('Asset is required'),
   movementType: z.enum(['Issued', 'Returned', 'Repair', 'Disposed', 'Transfer']),
   movementDate: z.string().min(1, 'Date is required'),
   fromLocation: z.string().optional().nullable(),
   toLocation: z.string().optional().nullable(),
-  departmentId: z.string().uuid().optional().nullable(),
+  departmentId: optionalId,
   notes: z.string().optional().nullable(),
 });
 
 export const transferSchema = z.object({
-  assetId: z.string().uuid('Asset is required'),
+  assetId: requiredId('Asset is required'),
   transferDate: z.string().min(1, 'Date is required'),
-  toDepartmentId: z.string().uuid('Target department is required'),
-  toEmployeeId: z.string().uuid().optional().nullable(),
+  toDepartmentId: requiredId('Target department is required'),
+  toEmployeeId: optionalId,
   reason: z.string().min(1, 'Reason is required'),
   approvedBy: z.string().min(1, 'Approver is required'),
   handover: z.string().optional().nullable(),
@@ -74,10 +89,10 @@ export const licenseSchema = z.object({
   type: z.string().min(1, 'Type is required'),
   edition: z.string().optional().nullable(),
   productKey: z.string().optional().nullable(),
-  assetId: z.string().uuid().optional().nullable(),
-  departmentId: z.string().uuid().optional().nullable(),
-  employeeId: z.string().uuid().optional().nullable(),
-  vendorId: z.string().uuid().optional().nullable(),
+  assetId: optionalId,
+  departmentId: optionalId,
+  employeeId: optionalId,
+  vendorId: optionalId,
   purchaseDate: z.string().optional().nullable(),
   expiryDate: z.string().optional().nullable(),
   status: z.enum(['Active', 'Expiring', 'Expired', 'Unassigned']).default('Active'),

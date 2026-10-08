@@ -37,7 +37,6 @@ import {
   FileSpreadsheet,
   Download,
   MoreHorizontal,
-  Eye,
   Pencil,
   ArrowLeftRight,
   ArrowUpDown,
@@ -71,6 +70,7 @@ export function AssetsClient({ assets, departments, employees, vendors }: Assets
   const [movementAssetId, setMovementAssetId] = useState<string>();
   const [transferAssetId, setTransferAssetId] = useState<string>();
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [editAsset, setEditAsset] = useState<Asset | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [deptFilter, setDeptFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
@@ -214,7 +214,7 @@ export function AssetsClient({ assets, departments, employees, vendors }: Assets
     {
       id: 'actions',
       header: 'Actions',
-      cell: ({ row }) => (
+      cell: ({ row }) => isAdmin ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => e.stopPropagation()}>
@@ -224,11 +224,9 @@ export function AssetsClient({ assets, departments, employees, vendors }: Assets
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => window.open(`/assets/${row.original.id}`, '_blank')}>
-              <Eye className="w-4 h-4 mr-2" /> View
+            <DropdownMenuItem onClick={() => setEditAsset(row.original)}>
+              <Pencil className="w-4 h-4 mr-2" /> Edit
             </DropdownMenuItem>
-            {isAdmin && (
-              <>
             <DropdownMenuItem onClick={() => { setMovementAssetId(row.original.id); setShowMovement(true); }}>
               <ArrowUpDown className="w-4 h-4 mr-2" /> Move
             </DropdownMenuItem>
@@ -242,11 +240,9 @@ export function AssetsClient({ assets, departments, employees, vendors }: Assets
             >
               <Trash2 className="w-4 h-4 mr-2" /> Delete
             </DropdownMenuItem>
-              </>
-            )}
           </DropdownMenuContent>
         </DropdownMenu>
-      ),
+      ) : null,
     },
   ], [isAdmin]);
 
@@ -340,6 +336,14 @@ export function AssetsClient({ assets, departments, employees, vendors }: Assets
         departments={departments}
         employees={employees}
         vendors={vendors}
+      />
+      <AddAssetModal
+        open={!!editAsset}
+        onClose={() => setEditAsset(null)}
+        departments={departments}
+        employees={employees}
+        vendors={vendors}
+        asset={editAsset}
       />
       <AddEmployeeModal
         open={showAddEmployee}

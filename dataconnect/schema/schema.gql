@@ -50,6 +50,8 @@ type Asset @table {
   keyboardSerial: String
   mouseSerial: String
 
+  macAddress: String
+
   invoiceNumber: String
   purchaseDate: Date
   warrantyYears: Int @default(value: 0)

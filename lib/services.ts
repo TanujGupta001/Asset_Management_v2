@@ -46,9 +46,9 @@ export async function getVendors(): Promise<Vendor[]> {
 export async function getAssets(): Promise<Asset[]> {
   const query = `query {
     assets(orderBy: [{assetTag: ASC}]) {
-      id assetTag type
+      id assetTag type departmentId employeeId vendorId
       cpuBrand monitorBrand keyboardBrand mouseBrand
-      cpuSerial monitorSerial keyboardSerial mouseSerial
+      cpuSerial monitorSerial keyboardSerial mouseSerial macAddress
       invoiceNumber purchaseDate warrantyYears warrantyExpiry
       windowsLicense msLicense windowsLicensePurchaseDate msLicensePurchaseDate
       antivirus status notes createdAt updatedAt
@@ -64,9 +64,9 @@ export async function getAssets(): Promise<Asset[]> {
 export async function getAssetById(id: string): Promise<Asset | null> {
   const query = `query GetAssetById($id: UUID!) {
     assets(where: {id: {eq: $id}}) {
-      id assetTag type
+      id assetTag type departmentId employeeId vendorId
       cpuBrand monitorBrand keyboardBrand mouseBrand
-      cpuSerial monitorSerial keyboardSerial mouseSerial
+      cpuSerial monitorSerial keyboardSerial mouseSerial macAddress
       invoiceNumber purchaseDate warrantyYears warrantyExpiry
       windowsLicense msLicense windowsLicensePurchaseDate msLicensePurchaseDate
       antivirus status notes createdAt updatedAt
@@ -82,9 +82,9 @@ export async function getAssetById(id: string): Promise<Asset | null> {
 export async function getAssetsByStatus(status: string): Promise<Asset[]> {
   const query = `query GetAssetsByStatus($status: String!) {
     assets(where: {status: {eq: $status}}, orderBy: [{assetTag: ASC}]) {
-      id assetTag type
+      id assetTag type departmentId employeeId vendorId
       cpuBrand monitorBrand keyboardBrand mouseBrand
-      cpuSerial monitorSerial keyboardSerial mouseSerial
+      cpuSerial monitorSerial keyboardSerial mouseSerial macAddress
       invoiceNumber purchaseDate warrantyYears warrantyExpiry
       windowsLicense msLicense windowsLicensePurchaseDate msLicensePurchaseDate
       antivirus status notes createdAt updatedAt
@@ -100,9 +100,9 @@ export async function getAssetsByStatus(status: string): Promise<Asset[]> {
 export async function getAssetsByDepartment(deptId: string): Promise<Asset[]> {
   const query = `query GetAssetsByDepartment($deptId: UUID!) {
     assets(where: {department: {id: {eq: $deptId}}}, orderBy: [{assetTag: ASC}]) {
-      id assetTag type
+      id assetTag type departmentId employeeId vendorId
       cpuBrand monitorBrand keyboardBrand mouseBrand
-      cpuSerial monitorSerial keyboardSerial mouseSerial
+      cpuSerial monitorSerial keyboardSerial mouseSerial macAddress
       invoiceNumber purchaseDate warrantyYears warrantyExpiry
       windowsLicense msLicense windowsLicensePurchaseDate msLicensePurchaseDate
       antivirus status notes createdAt updatedAt
@@ -360,6 +360,7 @@ function mapAsset(r: any): Asset {
     keyboardBrand: r.keyboardBrand, mouseBrand: r.mouseBrand,
     cpuSerial: r.cpuSerial, monitorSerial: r.monitorSerial,
     keyboardSerial: r.keyboardSerial, mouseSerial: r.mouseSerial,
+    macAddress: r.macAddress,
     vendorId: r.vendorId, invoiceNumber: r.invoiceNumber,
     purchaseDate: r.purchaseDate, warrantyYears: r.warrantyYears ?? 0,
     warrantyExpiry: r.warrantyExpiry, windowsLicense: r.windowsLicense,

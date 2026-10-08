@@ -45,11 +45,15 @@ import {
   PackageOpen,
   Plus,
   Trash2,
+  Pencil,
   MoreHorizontal,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Telephone, Printer as PrinterType } from '@/types';
-import { deleteTelephoneAction, deletePrinterAction, createTelephoneAction, createPrinterAction } from '@/actions';
+import {
+  deleteTelephoneAction, deletePrinterAction, createTelephoneAction, createPrinterAction,
+  updateTelephoneAction, updatePrinterAction,
+} from '@/actions';
 import { useAuth } from '@/components/auth-provider';
 
 interface TelephonesPrintersClientProps {
@@ -66,6 +70,8 @@ export function TelephonesPrintersClient({
   const [deletePrinterId, setDeletePrinterId] = useState<string | null>(null);
   const [showAddTelephone, setShowAddTelephone] = useState(false);
   const [showAddPrinter, setShowAddPrinter] = useState(false);
+  const [editTelephone, setEditTelephone] = useState<Telephone | null>(null);
+  const [editPrinter, setEditPrinter] = useState<PrinterType | null>(null);
 
   const telephonesByOrg = useMemo(() => {
     const groups: Record<string, Telephone[]> = {};
@@ -144,6 +150,9 @@ export function TelephonesPrintersClient({
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setEditTelephone(row.original)}>
+                <Pencil className="w-4 h-4 mr-2" /> Edit
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive"
                 onClick={() => setDeleteTelephoneId(row.original.id)}
@@ -191,6 +200,9 @@ export function TelephonesPrintersClient({
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setEditPrinter(row.original)}>
+                <Pencil className="w-4 h-4 mr-2" /> Edit
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive"
                 onClick={() => setDeletePrinterId(row.original.id)}
@@ -297,6 +309,19 @@ export function TelephonesPrintersClient({
       <AddTelephoneDialog open={showAddTelephone} onClose={() => setShowAddTelephone(false)} />
       <AddPrinterDialog open={showAddPrinter} onClose={() => setShowAddPrinter(false)} />
 
+      <AddTelephoneDialog
+        key={editTelephone?.id ?? 'edit-telephone'}
+        open={!!editTelephone}
+        onClose={() => setEditTelephone(null)}
+        telephone={editTelephone}
+      />
+      <AddPrinterDialog
+        key={editPrinter?.id ?? 'edit-printer'}
+        open={!!editPrinter}
+        onClose={() => setEditPrinter(null)}
+        printer={editPrinter}
+      />
+
       <AlertDialog open={!!deleteTelephoneId} onOpenChange={(v) => !v && setDeleteTelephoneId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -340,21 +365,25 @@ export function TelephonesPrintersClient({
   );
 }
 
-function AddTelephoneDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+function AddTelephoneDialog({ open, onClose, telephone }: { open: boolean; onClose: () => void; telephone?: Telephone | null }) {
   const [loading, setLoading] = useState(false);
+  const isEdit = !!telephone;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formEl = e.currentTarget;
     setLoading(true);
-    const formData = new FormData(e.currentTarget);
-    const result = await createTelephoneAction(formData);
+    const formData = new FormData(formEl);
+    const result = isEdit
+      ? await updateTelephoneAction(telephone!.id, formData)
+      : await createTelephoneAction(formData);
     setLoading(false);
     if (result.error) {
-      toast.error('Failed to add telephone', { description: result.error });
+      toast.error(isEdit ? 'Failed to update telephone' : 'Failed to add telephone', { description: result.error });
     } else {
-      toast.success('Telephone added');
+      toast.success(isEdit ? 'Telephone updated' : 'Telephone added');
+      if (!isEdit) formEl.reset();
       onClose();
-      e.currentTarget.reset();
     }
   };
 
@@ -362,36 +391,38 @@ function AddTelephoneDialog({ open, onClose }: { open: boolean; onClose: () => v
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Telephone</DialogTitle>
-          <DialogDescription>Register a new telephone extension.</DialogDescription>
+          <DialogTitle>{isEdit ? 'Edit Telephone' : 'Add Telephone'}</DialogTitle>
+          <DialogDescription>
+            {isEdit ? 'Update this telephone extension.' : 'Register a new telephone extension.'}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="extension">Extension</Label>
-            <Input id="extension" name="extension" placeholder="e.g. 101" />
+            <Input id="extension" name="extension" placeholder="e.g. 101" defaultValue={telephone?.extension ?? ''} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="contactNumber">Contact Number</Label>
-            <Input id="contactNumber" name="contactNumber" placeholder="e.g. +1 555-0100" />
+            <Input id="contactNumber" name="contactNumber" placeholder="e.g. +1 555-0100" defaultValue={telephone?.contactNumber ?? ''} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="assignedTo">Assigned To</Label>
-            <Input id="assignedTo" name="assignedTo" placeholder="Person or department" />
+            <Input id="assignedTo" name="assignedTo" placeholder="Person or department" defaultValue={telephone?.assignedTo ?? ''} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="organization">Organization</Label>
-            <Input id="organization" name="organization" placeholder="Organization / group" />
+            <Input id="organization" name="organization" placeholder="Organization / group" defaultValue={telephone?.organization ?? ''} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="serial">Serial</Label>
-            <Input id="serial" name="serial" placeholder="Serial number" />
+            <Input id="serial" name="serial" placeholder="Serial number" defaultValue={telephone?.serial ?? ''} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
             <select
               id="status"
               name="status"
-              defaultValue="Working"
+              defaultValue={telephone?.status ?? 'Working'}
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               <option value="Working">Working</option>
@@ -404,7 +435,7 @@ function AddTelephoneDialog({ open, onClose }: { open: boolean; onClose: () => v
               <Button type="button" variant="outline">Cancel</Button>
             </DialogClose>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Adding...' : 'Add Telephone'}
+              {loading ? (isEdit ? 'Saving...' : 'Adding...') : isEdit ? 'Save Changes' : 'Add Telephone'}
             </Button>
           </DialogFooter>
         </form>
@@ -413,21 +444,25 @@ function AddTelephoneDialog({ open, onClose }: { open: boolean; onClose: () => v
   );
 }
 
-function AddPrinterDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+function AddPrinterDialog({ open, onClose, printer }: { open: boolean; onClose: () => void; printer?: PrinterType | null }) {
   const [loading, setLoading] = useState(false);
+  const isEdit = !!printer;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formEl = e.currentTarget;
     setLoading(true);
-    const formData = new FormData(e.currentTarget);
-    const result = await createPrinterAction(formData);
+    const formData = new FormData(formEl);
+    const result = isEdit
+      ? await updatePrinterAction(printer!.id, formData)
+      : await createPrinterAction(formData);
     setLoading(false);
     if (result.error) {
-      toast.error('Failed to add printer', { description: result.error });
+      toast.error(isEdit ? 'Failed to update printer' : 'Failed to add printer', { description: result.error });
     } else {
-      toast.success('Printer added');
+      toast.success(isEdit ? 'Printer updated' : 'Printer added');
+      if (!isEdit) formEl.reset();
       onClose();
-      e.currentTarget.reset();
     }
   };
 
@@ -435,36 +470,38 @@ function AddPrinterDialog({ open, onClose }: { open: boolean; onClose: () => voi
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Printer</DialogTitle>
-          <DialogDescription>Register a new printer device.</DialogDescription>
+          <DialogTitle>{isEdit ? 'Edit Printer' : 'Add Printer'}</DialogTitle>
+          <DialogDescription>
+            {isEdit ? 'Update this printer device.' : 'Register a new printer device.'}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="serial">Serial</Label>
-            <Input id="serial" name="serial" placeholder="Serial number" />
+            <Input id="serial" name="serial" placeholder="Serial number" defaultValue={printer?.serial ?? ''} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="brand">Brand</Label>
-            <Input id="brand" name="brand" placeholder="e.g. HP, Canon" />
+            <Input id="brand" name="brand" placeholder="e.g. HP, Canon" defaultValue={printer?.brand ?? ''} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="model">Model</Label>
-            <Input id="model" name="model" placeholder="Model name" />
+            <Input id="model" name="model" placeholder="Model name" defaultValue={printer?.model ?? ''} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="productNumber">Product Number</Label>
-            <Input id="productNumber" name="productNumber" placeholder="Product number" />
+            <Input id="productNumber" name="productNumber" placeholder="Product number" defaultValue={printer?.productNumber ?? ''} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="assignedTo">Assigned To</Label>
-            <Input id="assignedTo" name="assignedTo" placeholder="Person or department" />
+            <Input id="assignedTo" name="assignedTo" placeholder="Person or department" defaultValue={printer?.assignedTo ?? ''} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
             <select
               id="status"
               name="status"
-              defaultValue="Working"
+              defaultValue={printer?.status ?? 'Working'}
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               <option value="Working">Working</option>
@@ -477,7 +514,7 @@ function AddPrinterDialog({ open, onClose }: { open: boolean; onClose: () => voi
               <Button type="button" variant="outline">Cancel</Button>
             </DialogClose>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Adding...' : 'Add Printer'}
+              {loading ? (isEdit ? 'Saving...' : 'Adding...') : isEdit ? 'Save Changes' : 'Add Printer'}
             </Button>
           </DialogFooter>
         </form>

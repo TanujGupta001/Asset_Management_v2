@@ -153,6 +153,8 @@ mutation CreateAsset(
   $keyboardSerial: String
   $mouseSerial: String
 
+  $macAddress: String
+
   $invoiceNumber: String
   $purchaseDate: Date
   $warrantyYears: Int
@@ -221,6 +223,7 @@ mutation UpdateAsset(
   $monitorSerial: String
   $keyboardSerial: String
   $mouseSerial: String
+  $macAddress: String
 
   $invoiceNumber: String
   $purchaseDate: Date
@@ -255,6 +258,7 @@ mutation UpdateAsset(
       monitorSerial: $monitorSerial
       keyboardSerial: $keyboardSerial
       mouseSerial: $mouseSerial
+      macAddress: $macAddress
 
       invoiceNumber: $invoiceNumber
       purchaseDate: $purchaseDate
@@ -625,6 +629,7 @@ mutation CreateAuditLog(
 # =========================
 # ADMIN USERS
 # =========================
+mutation CreateAdminUser(
   $username: String!
   $password: String!
   $role: String

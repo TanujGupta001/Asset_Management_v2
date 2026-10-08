@@ -27,7 +27,7 @@ export function Sidebar() {
         </div>
         {!sidebarCollapsed && (
           <div className="overflow-hidden">
-            <p className="font-bold text-sm tracking-tight leading-tight">IT Asset</p>
+            <p className="font-bold text-sm tracking-tight leading-tight">GoalSeek Asset</p>
             <p className="font-bold text-sm tracking-tight leading-tight">Manager</p>
           </div>
         )}

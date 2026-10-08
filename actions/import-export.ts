@@ -60,8 +60,8 @@ export async function processImport(payload: ImportPayload) {
       const existing = await executeGraphQL<{ assets: any[] }>(checkQuery, { tag: assetTag }, true);
 
       if (existing.assets.length) {
-        const mutation = `mutation UpdateAssetImport($id: UUID!, $assetTag: String!, $type: String, $cpuBrand: String, $monitorBrand: String, $keyboardBrand: String, $mouseBrand: String, $cpuSerial: String, $monitorSerial: String, $keyboardSerial: String, $mouseSerial: String, $invoiceNumber: String, $purchaseDate: Date, $warrantyYears: Int, $warrantyExpiry: Date, $windowsLicense: String, $msLicense: String, $antivirus: String, $status: String, $notes: String) {
-          asset_update(key: {id: $id}, data: {assetTag: $assetTag, type: $type, cpuBrand: $cpuBrand, monitorBrand: $monitorBrand, keyboardBrand: $keyboardBrand, mouseBrand: $mouseBrand, cpuSerial: $cpuSerial, monitorSerial: $monitorSerial, keyboardSerial: $keyboardSerial, mouseSerial: $mouseSerial, invoiceNumber: $invoiceNumber, purchaseDate: $purchaseDate, warrantyYears: $warrantyYears, warrantyExpiry: $warrantyExpiry, windowsLicense: $windowsLicense, msLicense: $msLicense, antivirus: $antivirus, status: $status, notes: $notes})
+        const mutation = `mutation UpdateAssetImport($id: UUID!, $assetTag: String!, $type: String, $cpuBrand: String, $monitorBrand: String, $keyboardBrand: String, $mouseBrand: String, $cpuSerial: String, $monitorSerial: String, $keyboardSerial: String, $mouseSerial: String, $macAddress: String, $invoiceNumber: String, $purchaseDate: Date, $warrantyYears: Int, $warrantyExpiry: Date, $windowsLicense: String, $msLicense: String, $antivirus: String, $status: String, $notes: String) {
+          asset_update(key: {id: $id}, data: {assetTag: $assetTag, type: $type, cpuBrand: $cpuBrand, monitorBrand: $monitorBrand, keyboardBrand: $keyboardBrand, mouseBrand: $mouseBrand, cpuSerial: $cpuSerial, monitorSerial: $monitorSerial, keyboardSerial: $keyboardSerial, mouseSerial: $mouseSerial, macAddress: $macAddress, invoiceNumber: $invoiceNumber, purchaseDate: $purchaseDate, warrantyYears: $warrantyYears, warrantyExpiry: $warrantyExpiry, windowsLicense: $windowsLicense, msLicense: $msLicense, antivirus: $antivirus, status: $status, notes: $notes})
         }`;
         await executeGraphQL(mutation, {
           id: existing.assets[0].id, assetTag,
@@ -74,6 +74,7 @@ export async function processImport(payload: ImportPayload) {
           monitorSerial: row.monitor_serial || row.monitorSerial || null,
           keyboardSerial: row.keyboard_serial || row.keyboardSerial || null,
           mouseSerial: row.mouse_serial || row.mouseSerial || null,
+          macAddress: row.mac_address || row.macAddress || null,
           invoiceNumber: row.invoice_number || row.invoiceNumber || null,
           purchaseDate: row.purchase_date || row.purchaseDate || null,
           warrantyYears: Number(row.warranty_years || row.warrantyYears) || 3,
@@ -86,8 +87,8 @@ export async function processImport(payload: ImportPayload) {
         });
         result.assetsUpdated++;
       } else {
-        const mutation = `mutation CreateAssetImport($assetTag: String!, $type: String, $cpuBrand: String, $monitorBrand: String, $keyboardBrand: String, $mouseBrand: String, $cpuSerial: String, $monitorSerial: String, $keyboardSerial: String, $mouseSerial: String, $invoiceNumber: String, $purchaseDate: Date, $warrantyYears: Int, $warrantyExpiry: Date, $windowsLicense: String, $msLicense: String, $antivirus: String, $status: String, $notes: String) {
-          asset_insert(data: {assetTag: $assetTag, type: $type, cpuBrand: $cpuBrand, monitorBrand: $monitorBrand, keyboardBrand: $keyboardBrand, mouseBrand: $mouseBrand, cpuSerial: $cpuSerial, monitorSerial: $monitorSerial, keyboardSerial: $keyboardSerial, mouseSerial: $mouseSerial, invoiceNumber: $invoiceNumber, purchaseDate: $purchaseDate, warrantyYears: $warrantyYears, warrantyExpiry: $warrantyExpiry, windowsLicense: $windowsLicense, msLicense: $msLicense, antivirus: $antivirus, status: $status, notes: $notes})
+        const mutation = `mutation CreateAssetImport($assetTag: String!, $type: String, $cpuBrand: String, $monitorBrand: String, $keyboardBrand: String, $mouseBrand: String, $cpuSerial: String, $monitorSerial: String, $keyboardSerial: String, $mouseSerial: String, $macAddress: String, $invoiceNumber: String, $purchaseDate: Date, $warrantyYears: Int, $warrantyExpiry: Date, $windowsLicense: String, $msLicense: String, $antivirus: String, $status: String, $notes: String) {
+          asset_insert(data: {assetTag: $assetTag, type: $type, cpuBrand: $cpuBrand, monitorBrand: $monitorBrand, keyboardBrand: $keyboardBrand, mouseBrand: $mouseBrand, cpuSerial: $cpuSerial, monitorSerial: $monitorSerial, keyboardSerial: $keyboardSerial, mouseSerial: $mouseSerial, macAddress: $macAddress, invoiceNumber: $invoiceNumber, purchaseDate: $purchaseDate, warrantyYears: $warrantyYears, warrantyExpiry: $warrantyExpiry, windowsLicense: $windowsLicense, msLicense: $msLicense, antivirus: $antivirus, status: $status, notes: $notes})
         }`;
         await executeGraphQL(mutation, {
           assetTag,
@@ -100,6 +101,7 @@ export async function processImport(payload: ImportPayload) {
           monitorSerial: row.monitor_serial || row.monitorSerial || null,
           keyboardSerial: row.keyboard_serial || row.keyboardSerial || null,
           mouseSerial: row.mouse_serial || row.mouseSerial || null,
+          macAddress: row.mac_address || row.macAddress || null,
           invoiceNumber: row.invoice_number || row.invoiceNumber || null,
           purchaseDate: row.purchase_date || row.purchaseDate || null,
           warrantyYears: Number(row.warranty_years || row.warrantyYears) || 3,

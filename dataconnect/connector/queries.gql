@@ -92,6 +92,7 @@ query GetAssets @auth(level: PUBLIC) {
     monitorSerial
     keyboardSerial
     mouseSerial
+    macAddress
 
     invoiceNumber
     purchaseDate
@@ -153,6 +154,7 @@ query GetAssetById($id: UUID!) @auth(level: PUBLIC) {
     monitorSerial
     keyboardSerial
     mouseSerial
+    macAddress
 
     invoiceNumber
     purchaseDate
@@ -217,6 +219,7 @@ query GetAssetsByStatus($status: String!) @auth(level: PUBLIC) {
     monitorSerial
     keyboardSerial
     mouseSerial
+    macAddress
 
     invoiceNumber
     purchaseDate
@@ -281,6 +284,7 @@ query GetAssetsByDepartment($deptId: UUID!) @auth(level: PUBLIC) {
     monitorSerial
     keyboardSerial
     mouseSerial
+    macAddress
 
     invoiceNumber
     purchaseDate
@@ -617,7 +621,6 @@ query GetAdminUserByUsername($username: String!) @auth(level: PUBLIC) {
   adminUsers(where: {username: {eq: $username}}) {
     id
     username
-    password
     role
     createdAt
     updatedAt

@@ -1,7 +1,10 @@
-# Connector configuration for ITAM SDK generation
-connectorName: itam-connector
-outputDir: ../lib/generated
+connectorId: itam-connector
+
 generate:
   javascriptSdk:
-    outputDir: ../lib/generated
-    package: @itam/dataconnect
+    outputDir: ../generated
+    package: "@itam/dataconnect"
+
+  adminNodeSdk:
+    outputDir: ../admin-generated
+    package: "@itam/admin-generated"

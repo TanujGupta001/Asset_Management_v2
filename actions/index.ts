@@ -28,14 +28,15 @@ export async function createAssetAction(formData: FormData) {
   if (existing.assets.length) return { error: 'Asset tag already exists' };
 
   const d = parsed.data;
-  const mutation = `mutation CreateAsset($assetTag: String!, $type: String, $departmentId: UUID, $employeeId: UUID, $cpuBrand: String, $monitorBrand: String, $keyboardBrand: String, $mouseBrand: String, $cpuSerial: String, $monitorSerial: String, $keyboardSerial: String, $mouseSerial: String, $vendorId: UUID, $invoiceNumber: String, $purchaseDate: Date, $warrantyYears: Int, $warrantyExpiry: Date, $windowsLicense: String, $msLicense: String, $windowsLicensePurchaseDate: Date, $msLicensePurchaseDate: Date, $antivirus: String, $status: String, $notes: String) {
-    asset_insert(data: {assetTag: $assetTag, type: $type, departmentId: $departmentId, employeeId: $employeeId, cpuBrand: $cpuBrand, monitorBrand: $monitorBrand, keyboardBrand: $keyboardBrand, mouseBrand: $mouseBrand, cpuSerial: $cpuSerial, monitorSerial: $monitorSerial, keyboardSerial: $keyboardSerial, mouseSerial: $mouseSerial, vendorId: $vendorId, invoiceNumber: $invoiceNumber, purchaseDate: $purchaseDate, warrantyYears: $warrantyYears, warrantyExpiry: $warrantyExpiry, windowsLicense: $windowsLicense, msLicense: $msLicense, windowsLicensePurchaseDate: $windowsLicensePurchaseDate, msLicensePurchaseDate: $msLicensePurchaseDate, antivirus: $antivirus, status: $status, notes: $notes})
+  const mutation = `mutation CreateAsset($assetTag: String!, $type: String, $departmentId: UUID, $employeeId: UUID, $cpuBrand: String, $monitorBrand: String, $keyboardBrand: String, $mouseBrand: String, $cpuSerial: String, $monitorSerial: String, $keyboardSerial: String, $mouseSerial: String, $macAddress: String, $vendorId: UUID, $invoiceNumber: String, $purchaseDate: Date, $warrantyYears: Int, $warrantyExpiry: Date, $windowsLicense: String, $msLicense: String, $windowsLicensePurchaseDate: Date, $msLicensePurchaseDate: Date, $antivirus: String, $status: String, $notes: String) {
+    asset_insert(data: {assetTag: $assetTag, type: $type, departmentId: $departmentId, employeeId: $employeeId, cpuBrand: $cpuBrand, monitorBrand: $monitorBrand, keyboardBrand: $keyboardBrand, mouseBrand: $mouseBrand, cpuSerial: $cpuSerial, monitorSerial: $monitorSerial, keyboardSerial: $keyboardSerial, mouseSerial: $mouseSerial, macAddress: $macAddress, vendorId: $vendorId, invoiceNumber: $invoiceNumber, purchaseDate: $purchaseDate, warrantyYears: $warrantyYears, warrantyExpiry: $warrantyExpiry, windowsLicense: $windowsLicense, msLicense: $msLicense, windowsLicensePurchaseDate: $windowsLicensePurchaseDate, msLicensePurchaseDate: $msLicensePurchaseDate, antivirus: $antivirus, status: $status, notes: $notes})
   }`;
 
   const data = await executeGraphQL<{ asset_insert: { id: string } }>(mutation, {
     assetTag: d.assetTag, type: d.type, departmentId: d.departmentId, employeeId: d.employeeId,
     cpuBrand: d.cpuBrand, monitorBrand: d.monitorBrand, keyboardBrand: d.keyboardBrand, mouseBrand: d.mouseBrand,
     cpuSerial: d.cpuSerial, monitorSerial: d.monitorSerial, keyboardSerial: d.keyboardSerial, mouseSerial: d.mouseSerial,
+    macAddress: d.macAddress,
     vendorId: d.vendorId, invoiceNumber: d.invoiceNumber, purchaseDate: d.purchaseDate,
     warrantyYears: d.warrantyYears, warrantyExpiry: d.warrantyExpiry,
     windowsLicense: d.windowsLicense, msLicense: d.msLicense,
@@ -56,14 +57,15 @@ export async function updateAssetAction(id: string, formData: FormData) {
   if (!parsed.success) return { error: parsed.error.issues[0]?.message || 'Invalid data' };
 
   const d = parsed.data;
-  const mutation = `mutation UpdateAsset($id: UUID!, $assetTag: String, $type: String, $departmentId: UUID, $employeeId: UUID, $cpuBrand: String, $monitorBrand: String, $keyboardBrand: String, $mouseBrand: String, $cpuSerial: String, $monitorSerial: String, $keyboardSerial: String, $mouseSerial: String, $vendorId: UUID, $invoiceNumber: String, $purchaseDate: Date, $warrantyYears: Int, $warrantyExpiry: Date, $windowsLicense: String, $msLicense: String, $windowsLicensePurchaseDate: Date, $msLicensePurchaseDate: Date, $antivirus: String, $status: String, $notes: String) {
-    asset_update(key: {id: $id}, data: {assetTag: $assetTag, type: $type, departmentId: $departmentId, employeeId: $employeeId, cpuBrand: $cpuBrand, monitorBrand: $monitorBrand, keyboardBrand: $keyboardBrand, mouseBrand: $mouseBrand, cpuSerial: $cpuSerial, monitorSerial: $monitorSerial, keyboardSerial: $keyboardSerial, mouseSerial: $mouseSerial, vendorId: $vendorId, invoiceNumber: $invoiceNumber, purchaseDate: $purchaseDate, warrantyYears: $warrantyYears, warrantyExpiry: $warrantyExpiry, windowsLicense: $windowsLicense, msLicense: $msLicense, windowsLicensePurchaseDate: $windowsLicensePurchaseDate, msLicensePurchaseDate: $msLicensePurchaseDate, antivirus: $antivirus, status: $status, notes: $notes})
+  const mutation = `mutation UpdateAsset($id: UUID!, $assetTag: String, $type: String, $departmentId: UUID, $employeeId: UUID, $cpuBrand: String, $monitorBrand: String, $keyboardBrand: String, $mouseBrand: String, $cpuSerial: String, $monitorSerial: String, $keyboardSerial: String, $mouseSerial: String, $macAddress: String, $vendorId: UUID, $invoiceNumber: String, $purchaseDate: Date, $warrantyYears: Int, $warrantyExpiry: Date, $windowsLicense: String, $msLicense: String, $windowsLicensePurchaseDate: Date, $msLicensePurchaseDate: Date, $antivirus: String, $status: String, $notes: String) {
+    asset_update(key: {id: $id}, data: {assetTag: $assetTag, type: $type, departmentId: $departmentId, employeeId: $employeeId, cpuBrand: $cpuBrand, monitorBrand: $monitorBrand, keyboardBrand: $keyboardBrand, mouseBrand: $mouseBrand, cpuSerial: $cpuSerial, monitorSerial: $monitorSerial, keyboardSerial: $keyboardSerial, mouseSerial: $mouseSerial, macAddress: $macAddress, vendorId: $vendorId, invoiceNumber: $invoiceNumber, purchaseDate: $purchaseDate, warrantyYears: $warrantyYears, warrantyExpiry: $warrantyExpiry, windowsLicense: $windowsLicense, msLicense: $msLicense, windowsLicensePurchaseDate: $windowsLicensePurchaseDate, msLicensePurchaseDate: $msLicensePurchaseDate, antivirus: $antivirus, status: $status, notes: $notes})
   }`;
 
   await executeGraphQL(mutation, {
     id, assetTag: d.assetTag, type: d.type, departmentId: d.departmentId, employeeId: d.employeeId,
     cpuBrand: d.cpuBrand, monitorBrand: d.monitorBrand, keyboardBrand: d.keyboardBrand, mouseBrand: d.mouseBrand,
     cpuSerial: d.cpuSerial, monitorSerial: d.monitorSerial, keyboardSerial: d.keyboardSerial, mouseSerial: d.mouseSerial,
+    macAddress: d.macAddress,
     vendorId: d.vendorId, invoiceNumber: d.invoiceNumber, purchaseDate: d.purchaseDate,
     warrantyYears: d.warrantyYears, warrantyExpiry: d.warrantyExpiry,
     windowsLicense: d.windowsLicense, msLicense: d.msLicense,
@@ -411,6 +413,28 @@ export async function createTelephoneAction(formData: FormData) {
   return { success: true };
 }
 
+export async function updateTelephoneAction(id: string, formData: FormData) {
+  const _s = await requireAdmin();
+  if (!_s) return { error: 'Unauthorized' };
+  const raw = Object.fromEntries(formData.entries());
+  const parsed = telephoneSchema.safeParse(raw);
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message || 'Invalid data' };
+
+  const d = parsed.data;
+  const mutation = `mutation UpdateTelephone($id: UUID!, $extension: String, $contactNumber: String, $assignedTo: String, $organization: String, $serial: String, $status: String) {
+    telephone_update(key: {id: $id}, data: {extension: $extension, contactNumber: $contactNumber, assignedTo: $assignedTo, organization: $organization, serial: $serial, status: $status})
+  }`;
+
+  await executeGraphQL(mutation, {
+    id, extension: d.extension, contactNumber: d.contactNumber, assignedTo: d.assignedTo,
+    organization: d.organization, serial: d.serial, status: d.status,
+  });
+
+  await createAuditLog({ action: 'UPDATE', entity: 'Telephone', entityId: id, performedBy: _s.username, details: `Updated telephone entry` });
+  revalidatePath('/telephones-printers');
+  return { success: true };
+}
+
 export async function deleteTelephoneAction(id: string) {
   const _s = await requireAdmin();
   if (!_s) return { error: 'Unauthorized' };
@@ -439,6 +463,28 @@ export async function createPrinterAction(formData: FormData) {
   });
 
   await createAuditLog({ action: 'CREATE', entity: 'Printer', entityId: data.printer_insert.id, performedBy: _s.username, details: `Created printer entry` });
+  revalidatePath('/telephones-printers');
+  return { success: true };
+}
+
+export async function updatePrinterAction(id: string, formData: FormData) {
+  const _s = await requireAdmin();
+  if (!_s) return { error: 'Unauthorized' };
+  const raw = Object.fromEntries(formData.entries());
+  const parsed = printerSchema.safeParse(raw);
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message || 'Invalid data' };
+
+  const d = parsed.data;
+  const mutation = `mutation UpdatePrinter($id: UUID!, $serial: String, $brand: String, $model: String, $productNumber: String, $assignedTo: String, $status: String) {
+    printer_update(key: {id: $id}, data: {serial: $serial, brand: $brand, model: $model, productNumber: $productNumber, assignedTo: $assignedTo, status: $status})
+  }`;
+
+  await executeGraphQL(mutation, {
+    id, serial: d.serial, brand: d.brand, model: d.model, productNumber: d.productNumber,
+    assignedTo: d.assignedTo, status: d.status,
+  });
+
+  await createAuditLog({ action: 'UPDATE', entity: 'Printer', entityId: id, performedBy: _s.username, details: `Updated printer entry` });
   revalidatePath('/telephones-printers');
   return { success: true };
 }

@@ -16,7 +16,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Plus, MoreHorizontal, Trash2, Eye, EyeOff, KeyRound, CheckCircle2, AlertTriangle, XCircle, Package } from 'lucide-react';
+import { Plus, MoreHorizontal, Trash2, Pencil, Eye, EyeOff, KeyRound, CheckCircle2, AlertTriangle, XCircle, Package } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { toast } from 'sonner';
 import type { SoftwareLicense, Asset, Department, Employee, Vendor } from '@/types';
@@ -34,6 +34,7 @@ interface LicensesClientProps {
 export function LicensesClient({ licenses, assets, departments, employees, vendors }: LicensesClientProps) {
   const { isAdmin } = useAuth();
   const [showAdd, setShowAdd] = useState(false);
+  const [editLicense, setEditLicense] = useState<SoftwareLicense | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
 
@@ -157,6 +158,9 @@ export function LicensesClient({ licenses, assets, departments, employees, vendo
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => setEditLicense(row.original)}>
+              <Pencil className="w-4 h-4 mr-2" /> Edit
+            </DropdownMenuItem>
             <DropdownMenuItem className="text-destructive" onClick={() => setDeleteId(row.original.id)}>
               <Trash2 className="w-4 h-4 mr-2" /> Delete
             </DropdownMenuItem>
@@ -207,6 +211,16 @@ export function LicensesClient({ licenses, assets, departments, employees, vendo
         departments={departments}
         employees={employees}
         vendors={vendors}
+      />
+
+      <AddLicenseModal
+        open={!!editLicense}
+        onClose={() => setEditLicense(null)}
+        assets={assets}
+        departments={departments}
+        employees={employees}
+        vendors={vendors}
+        license={editLicense}
       />
 
       <AlertDialog open={!!deleteId} onOpenChange={(v) => !v && setDeleteId(null)}>

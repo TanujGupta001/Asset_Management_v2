@@ -54,6 +54,7 @@ export interface Asset {
   monitorSerial: string | null;
   keyboardSerial: string | null;
   mouseSerial: string | null;
+  macAddress: string | null;
   vendorId: string | null;
   invoiceNumber: string | null;
   purchaseDate: string | null;
