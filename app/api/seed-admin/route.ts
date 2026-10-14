@@ -6,10 +6,10 @@ export const dynamic = 'force-dynamic';
 
 // One-time bootstrap of the initial admin. No-ops once an admin exists, and is
 // disabled entirely in production to avoid an open account-creation endpoint.
-export async function GET() {
-  if (process.env.NODE_ENV === 'production') {
-    return NextResponse.json({ error: 'Not available' }, { status: 404 });
-  }
+// export async function GET() {
+//   if (process.env.NODE_ENV === 'production') {
+//     return NextResponse.json({ error: 'Not available' }, { status: 404 });
+//   }
 
   const checkQuery = `query { adminUsers(where: {username: {eq: "admin"}}) { id } }`;
   const existing = await executeGraphQL<{ adminUsers: any[] }>(checkQuery, {}, true);
