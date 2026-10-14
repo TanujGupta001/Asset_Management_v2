@@ -31,8 +31,17 @@ export function getDataConnectClient(): DataConnect {
 
   getApp();
 
-  const serviceId = process.env.FIREBASE_DATA_CONNECT_SERVICE_ID || 'itam-dataconnect';
-  const location = process.env.FIREBASE_DATA_CONNECT_LOCATION || 'us-central1';
+  const serviceId = process.env.FIREBASE_DATA_CONNECT_SERVICE_ID;
+
+const location = process.env.FIREBASE_DATA_CONNECT_LOCATION;
+
+if (!serviceId) {
+  throw new Error('FIREBASE_DATA_CONNECT_SERVICE_ID is not configured');
+}
+
+if (!location) {
+  throw new Error('FIREBASE_DATA_CONNECT_LOCATION is not configured');
+}
 
   dataConnectInstance = getDataConnect({ serviceId, location });
   return dataConnectInstance;

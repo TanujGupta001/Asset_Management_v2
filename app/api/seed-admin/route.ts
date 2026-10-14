@@ -23,7 +23,7 @@ export async function GET() {
   }`;
 
   await executeGraphQL(mutation, {
-    username: 'Tanuj',
+    username: 'TanujG',
     password: hashPassword('Tanuj130728@'),
     role: 'admin',
   });
