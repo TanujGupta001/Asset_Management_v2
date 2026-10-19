@@ -3,39 +3,30 @@ import { scryptSync, randomBytes } from 'node:crypto';
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getDataConnect } from 'firebase-admin/data-connect';
 
-// ============================================================
-// CONFIGURATION
-// ============================================================
-
 const PROJECT_ID = 'asset-management-gs';
 const SERVICE_ID = 'asset-management-gs-service';
 const LOCATION = 'asia-south1';
 
-// Change these if you want different login credentials.
-const USERNAME = 'tanujG';
-const PASSWORD = 'Tanuj130728@rsd';
+const USERNAME = 'tg131124';
+const PASSWORD = process.env.ADMIN_INITIAL_PASSWORD;
 const ROLE = 'admin';
 
-// ============================================================
-// PASSWORD HASHING
-// Must exactly match lib/auth-server.ts
-// Format: scrypt$<saltHex>$<hashHex>
-// ============================================================
-
+// Same algorithm and storage format as lib/auth-server.ts
 function hashPassword(plain) {
   const salt = randomBytes(16);
   const hash = scryptSync(plain, salt, 64);
-
   return `scrypt$${salt.toString('hex')}$${hash.toString('hex')}`;
 }
 
-// ============================================================
-// FIREBASE ADMIN INITIALIZATION
-// ============================================================
+if (!PASSWORD) {
+  throw new Error(
+    'Set ADMIN_INITIAL_PASSWORD in PowerShell before running this script.'
+  );
+}
 
-const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+const key = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
 
-if (!serviceAccountKey) {
+if (!key) {
   throw new Error(
     'FIREBASE_SERVICE_ACCOUNT_KEY environment variable is missing.'
   );
@@ -44,88 +35,56 @@ if (!serviceAccountKey) {
 let serviceAccount;
 
 try {
-  serviceAccount = JSON.parse(serviceAccountKey);
-} catch (error) {
-  throw new Error(
-    'FIREBASE_SERVICE_ACCOUNT_KEY is not valid JSON.'
-  );
+  serviceAccount = JSON.parse(key);
+} catch {
+  throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY is not valid JSON.');
 }
 
-const app = initializeApp({
+initializeApp({
   credential: cert(serviceAccount),
   projectId: PROJECT_ID,
 });
 
-const dataConnect = getDataConnect({
+const dc = getDataConnect({
   serviceId: SERVICE_ID,
   location: LOCATION,
 });
 
-// ============================================================
-// GRAPHQL HELPER
-// ============================================================
+async function executeGraphQL(query, variables = {}, readOnly = false) {
+  const result = readOnly
+    ? await dc.executeGraphqlRead(query, { variables })
+    : await dc.executeGraphql(query, { variables });
 
-async function executeGraphQL(query, variables = {}) {
-  const response = await dataConnect.executeGraphql(query, {
-    variables,
-  });
-
-  return response.data;
+  return result.data;
 }
 
-// ============================================================
-// CHECK IF USER ALREADY EXISTS
-// ============================================================
-
 const checkQuery = `
-  query GetAdminUserByUsername($username: String!) {
+  query CheckAdmin($username: String!) {
     adminUsers(where: { username: { eq: $username } }) {
       id
       username
       role
-      password
     }
   }
 `;
 
-const existing = await executeGraphQL(checkQuery, {
-  username: USERNAME,
-});
+const existing = await executeGraphQL(
+  checkQuery,
+  { username: USERNAME },
+  true
+);
 
-if (existing.adminUsers && existing.adminUsers.length > 0) {
-  console.log('⚠️ Admin user already exists.');
-  console.log(`Username: ${USERNAME}`);
-  console.log(`Role: ${existing.adminUsers[0].role}`);
-
-  const storedPassword = existing.adminUsers[0].password;
-
-  if (storedPassword?.startsWith('scrypt$')) {
-    console.log('Password format: ✅ scrypt');
-  } else {
-    console.log('Password format: ❌ NOT scrypt');
-    console.log(
-      'Delete this user and run the seed script again.'
-    );
-  }
-
-  process.exit(0);
+if (existing.adminUsers?.length) {
+  throw new Error(
+    `User "${USERNAME}" already exists. No changes were made. Use a dedicated password-reset operation instead.`
+  );
 }
-
-// ============================================================
-// HASH PASSWORD
-// ============================================================
-
-const hashedPassword = hashPassword(PASSWORD);
-
-// ============================================================
-// CREATE ADMIN USER
-// ============================================================
 
 const mutation = `
   mutation CreateAdminUser(
     $username: String!
     $password: String!
-    $role: String!
+    $role: String
   ) {
     adminUser_insert(
       data: {
@@ -139,24 +98,13 @@ const mutation = `
 
 await executeGraphQL(mutation, {
   username: USERNAME,
-  password: hashedPassword,
+  password: hashPassword(PASSWORD),
   role: ROLE,
 });
 
-// ============================================================
-// SUCCESS
-// ============================================================
-
-console.log('');
-console.log('==========================================');
-console.log('✅ Admin user created successfully');
-console.log('==========================================');
+console.log('Admin user created successfully.');
 console.log(`Username: ${USERNAME}`);
-console.log(`Password: ${PASSWORD}`);
-console.log(`Role:     ${ROLE}`);
-console.log('');
-console.log('Password hashing: scrypt ✅');
-console.log(`Project:  ${PROJECT_ID}`);
-console.log(`Service:  ${SERVICE_ID}`);
-console.log(`Location: ${LOCATION}`);
-console.log('==========================================');
+console.log(`Role: ${ROLE}`);
+console.log('Password format: scrypt');
+console.log('The password itself was not printed.');
+
